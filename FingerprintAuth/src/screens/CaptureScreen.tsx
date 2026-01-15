@@ -23,6 +23,7 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
   const [showCamera, setShowCamera] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [successIcon, setSuccessIcon] = useState<'check-circle' | 'photo-library'>('check-circle');
   const cameraRef = useRef<any>(null);
 
   const pickImage = async () => {
@@ -36,7 +37,8 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
     if (!result.canceled && result.assets[0]) {
       const uri = result.assets[0].uri;
       if (step === 1) {
-        setSuccessMessage('First fingerprint captured!');
+        setSuccessMessage('First fingerprint selected!');
+        setSuccessIcon('photo-library');
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
@@ -44,7 +46,8 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
           setStep(2);
         }, 1500);
       } else {
-        setSuccessMessage('Second fingerprint captured!');
+        setSuccessMessage('Second fingerprint selected!');
+        setSuccessIcon('photo-library');
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
@@ -63,6 +66,7 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
 
     if (step === 1) {
       setSuccessMessage('First fingerprint captured!');
+      setSuccessIcon('check-circle');
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -71,6 +75,7 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
       }, 1500);
     } else {
       setSuccessMessage('Second fingerprint captured!');
+      setSuccessIcon('check-circle');
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -178,7 +183,7 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
           </TouchableOpacity>
         )}
       </GlassCard>
-      <SuccessPopup visible={showSuccess} message={successMessage} />
+      <SuccessPopup visible={showSuccess} message={successMessage} icon={successIcon} />
       <LoadingOverlay visible={loading} progress={progress} />
     </View>
   );

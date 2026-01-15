@@ -6,9 +6,10 @@ import { colors } from '../theme/colors';
 interface SuccessPopupProps {
   visible: boolean;
   message: string;
+  icon?: 'check-circle' | 'photo-library';
 }
 
-export const SuccessPopup: React.FC<SuccessPopupProps> = ({ visible, message }) => {
+export const SuccessPopup: React.FC<SuccessPopupProps> = ({ visible, message, icon = 'check-circle' }) => {
   const scaleAnim = new Animated.Value(0);
   const opacityAnim = new Animated.Value(0);
 
@@ -47,7 +48,7 @@ export const SuccessPopup: React.FC<SuccessPopupProps> = ({ visible, message }) 
         ]}
       >
         <View style={styles.iconContainer}>
-          <MaterialIcons name="check-circle" size={64} color={colors.success} />
+          <MaterialIcons name={icon} size={64} color={colors.success} />
         </View>
         <Text style={styles.message}>{message}</Text>
       </Animated.View>

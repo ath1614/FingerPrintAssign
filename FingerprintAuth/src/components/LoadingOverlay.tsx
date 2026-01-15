@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, Text, StyleSheet, Modal } from 'react-native';
 import { colors } from '../theme/colors';
 
 interface LoadingOverlayProps {
@@ -8,37 +8,37 @@ interface LoadingOverlayProps {
 }
 
 export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, progress }) => {
-  if (!visible) return null;
-
   return (
-    <View style={styles.overlay}>
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.text}>Analyzing fingerprints...</Text>
-        {progress !== undefined && (
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: `${progress}%` }]} />
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      statusBarTranslucent
+    >
+      <View style={styles.overlay}>
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={styles.text}>Analyzing fingerprints...</Text>
+          {progress !== undefined && (
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                <View style={[styles.progressFill, { width: `${progress}%` }]} />
+              </View>
+              <Text style={styles.progressText}>{Math.round(progress)}%</Text>
             </View>
-            <Text style={styles.progressText}>{Math.round(progress)}%</Text>
-          </View>
-        )}
+          )}
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
   },
   container: {
     alignItems: 'center',

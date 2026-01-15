@@ -15,6 +15,12 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({ match, similarity, o
   const resultColor = match ? colors.success : colors.error;
   const iconName = match ? 'check-circle' : 'cancel';
   
+  // Ensure similarity is between 0-1, if it's already a percentage (>1), divide by 100
+  const normalizedSimilarity = similarity > 1 ? similarity / 100 : similarity;
+  const percentageScore = (normalizedSimilarity * 100).toFixed(1);
+  
+  console.log('Result:', { match, similarity, normalizedSimilarity, percentageScore });
+  
   return (
     <View style={styles.container}>
       <GlassCard>
@@ -24,7 +30,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({ match, similarity, o
         </Text>
         <View style={styles.similarityContainer}>
           <Text style={styles.similarityLabel}>Similarity Score</Text>
-          <Text style={styles.similarityValue}>{(similarity * 100).toFixed(1)}%</Text>
+          <Text style={styles.similarityValue}>{percentageScore}%</Text>
         </View>
         <PrimaryButton title="Restart Verification" onPress={onReset} />
       </GlassCard>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, Modal } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 
@@ -34,39 +34,39 @@ export const SuccessPopup: React.FC<SuccessPopupProps> = ({ visible, message, ic
     }
   }, [visible]);
 
-  if (!visible) return null;
-
   return (
-    <View style={styles.overlay}>
-      <Animated.View
-        style={[
-          styles.popup,
-          {
-            transform: [{ scale: scaleAnim }],
-            opacity: opacityAnim,
-          },
-        ]}
-      >
-        <View style={styles.iconContainer}>
-          <MaterialIcons name={icon} size={64} color={colors.success} />
-        </View>
-        <Text style={styles.message}>{message}</Text>
-      </Animated.View>
-    </View>
+    <Modal
+      transparent
+      visible={visible}
+      animationType="none"
+      statusBarTranslucent
+    >
+      <View style={styles.overlay}>
+        <Animated.View
+          style={[
+            styles.popup,
+            {
+              transform: [{ scale: scaleAnim }],
+              opacity: opacityAnim,
+            },
+          ]}
+        >
+          <View style={styles.iconContainer}>
+            <MaterialIcons name={icon} size={64} color={colors.success} />
+          </View>
+          <Text style={styles.message}>{message}</Text>
+        </Animated.View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    zIndex: 1001,
   },
   popup: {
     backgroundColor: colors.surface,

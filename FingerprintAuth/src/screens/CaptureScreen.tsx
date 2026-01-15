@@ -86,6 +86,9 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
   };
 
   const uploadAndVerify = async (uri1: string, uri2: string) => {
+    // Small delay to ensure success popup is shown first
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     setLoading(true);
     setProgress(0);
     
@@ -105,6 +108,7 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
       setProgress(100);
       setTimeout(() => {
         clearInterval(progressInterval);
+        setLoading(false);
         onResult(result);
       }, 500);
     } catch (error) {

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
     "@types/react": "^19.2.8",
     "@types/react-native": "^0.72.8",
     "expo": "^54.0.31",

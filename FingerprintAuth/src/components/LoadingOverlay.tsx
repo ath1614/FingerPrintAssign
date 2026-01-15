@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet, Animated } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { colors } from '../theme/colors';
 
 interface LoadingOverlayProps {
@@ -13,20 +12,18 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, progres
 
   return (
     <View style={styles.overlay}>
-      <BlurView intensity={20} style={styles.blur}>
-        <View style={styles.container}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.text}>Analyzing fingerprints...</Text>
-          {progress !== undefined && (
-            <View style={styles.progressContainer}>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: `${progress}%` }]} />
-              </View>
-              <Text style={styles.progressText}>{Math.round(progress)}%</Text>
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={styles.text}>Analyzing fingerprints...</Text>
+        {progress !== undefined && (
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <View style={[styles.progressFill, { width: `${progress}%` }]} />
             </View>
-          )}
-        </View>
-      </BlurView>
+            <Text style={styles.progressText}>{Math.round(progress)}%</Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -38,19 +35,22 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 1000,
-  },
-  blur: {
-    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1000,
   },
   container: {
     alignItems: 'center',
     backgroundColor: colors.surface,
     padding: 32,
     borderRadius: 16,
-    minWidth: 200,
+    minWidth: 250,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 10,
   },
   text: {
     marginTop: 16,

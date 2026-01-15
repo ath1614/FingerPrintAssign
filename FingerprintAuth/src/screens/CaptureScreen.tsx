@@ -24,6 +24,7 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [successIcon, setSuccessIcon] = useState<'check-circle' | 'photo-library'>('check-circle');
+  const [hideCamera, setHideCamera] = useState(false);
   const cameraRef = useRef<any>(null);
 
   const pickImage = async () => {
@@ -36,12 +37,14 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
 
     if (!result.canceled && result.assets[0]) {
       const uri = result.assets[0].uri;
+      setHideCamera(true);
       if (step === 1) {
         setSuccessMessage('First fingerprint selected!');
         setSuccessIcon('photo-library');
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
+          setHideCamera(false);
           setFingerprint1(uri);
           setStep(2);
         }, 1500);
@@ -64,12 +67,14 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
     const uri = await cameraRef.current.capture();
     if (!uri) return;
 
+    setHideCamera(true);
     if (step === 1) {
       setSuccessMessage('First fingerprint captured!');
       setSuccessIcon('check-circle');
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
+        setHideCamera(false);
         setFingerprint1(uri);
         setStep(2);
       }, 1500);
@@ -129,67 +134,81 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
     : 'Position your second fingerprint in the frame';
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.stepIndicator}>
-          <View style={[styles.stepDot, step >= 1 && styles.stepDotActive]} />
-          <View style={styles.stepLine} />
-          <View style={[styles.stepDot, step >= 2 && styles.stepDotActive]} />
-        </View>
-        <Text style={styles.stepText}>Step {step} of 2</Text>
-      </View>
-      
-      <GlassCard>
-        {showCamera ? (
-          <CameraBox ref={cameraRef} instruction={instruction} />
-        ) : (
-          <View style={styles.galleryPlaceholder}>
-            <MaterialIcons name="photo-library" size={64} color={colors.textSecondary} />
-            <Text style={styles.galleryText}>Select from gallery</Text>
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.stepIndicator}>
+            <View style={[styles.stepDot, step >= 1 && styles.stepDotActive]} />
+            <View style={styles.stepLine} />
+            <View style={[styles.stepDot, step >= 2 && styles.stepDotActive]} />
           </View>
-        )}
-        
-        <View style={styles.toggleContainer}>
-          <TouchableOpacity 
-            style={[styles.toggleButton, showCamera && styles.toggleButtonActive]}
-            onPress={() => setShowCamera(true)}
-          >
-            <MaterialIcons name="camera-alt" size={20} color={showCamera ? colors.surface : colors.textSecondary} />
-            <Text style={[styles.toggleText, showCamera && styles.toggleTextActive]}>Camera</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.toggleButton, !showCamera && styles.toggleButtonActive]}
-            onPress={() => setShowCamera(false)}
-          >
-            <MaterialIcons name="photo-library" size={20} color={!showCamera ? colors.surface : colors.textSecondary} />
-            <Text style={[styles.toggleText, !showCamera && styles.toggleTextActive]}>Gallery</Text>
-          </TouchableOpacity>
+          <Text style={styles.stepText}>Step {step} of 2</Text>
         </View>
-
-        <View style={styles.buttonContainer}>
-          {showCamera ? (
-            <PrimaryButton 
-              title={step === 1 ? 'Capture First Fingerprint' : 'Capture & Verify'} 
-              onPress={handleCapture} 
-            />
-          ) : (
-            <PrimaryButton 
-              title={step === 1 ? 'Select First Fingerprint' : 'Select & Verify'} 
-              onPress={pickImage} 
-            />
+        
+        <GlassCard>
+          {!hideCamera && (
+            <>
+              {showCamera ? (
+                <CameraBox ref={cameraRef} instruction={instruction} />
+              ) : (
+                <View style={styles.galleryPlaceholder}>
+                  <MaterialIcons name="photo-library" size={64} color={colors.textSecondary} />
+                  <Text style={styles.galleryText}>Select from gallery</Text>
+                </View>
+              )}
+            </>
           )}
-        </View>
-        
-        {step === 2 && (
-          <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
-            <MaterialIcons name="arrow-back" size={20} color={colors.primary} />
-            <Text style={styles.backText}>Retake First</Text>
-          </TouchableOpacity>
-        )}
-      </GlassCard>
+          
+          {hideCamera && (
+            <View style={styles.hiddenPlaceholder}>
+              <MaterialIcons name="check-circle" size={64} color={colors.success} />
+            </View>
+          )}
+          
+          <View style={styles.toggleContainer}>
+            <TouchableOpacity 
+              style={[styles.toggleButton, showCamera && styles.toggleButtonActive]}
+              onPress={() => setShowCamera(true)}
+            >
+              <MaterialIcons name="camera-alt" size={20} color={showCamera ? colors.surface : colors.textSecondary} />
+              <Text style={[styles.toggleText, showCamera && styles.toggleTextActive]}>Camera</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.toggleButton, !showCamera && styles.toggleButtonActive]}
+              onPress={() => setShowCamera(false)}
+            >
+              <MaterialIcons name="photo-library" size={20} color={!showCamera ? colors.surface : colors.textSecondary} />
+              <Text style={[styles.toggleText, !showCamera && styles.toggleTextActive]}>Gallery</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            {showCamera ? (
+              <PrimaryButton 
+                title={step === 1 ? 'Capture First Fingerprint' : 'Capture & Verify'} 
+                onPress={handleCapture}
+                disabled={hideCamera || loading}
+              />
+            ) : (
+              <PrimaryButton 
+                title={step === 1 ? 'Select First Fingerprint' : 'Select & Verify'} 
+                onPress={pickImage}
+                disabled={hideCamera || loading}
+              />
+            )}
+          </View>
+          
+          {step === 2 && (
+            <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
+              <MaterialIcons name="arrow-back" size={20} color={colors.primary} />
+              <Text style={styles.backText}>Retake First</Text>
+            </TouchableOpacity>
+          )}
+        </GlassCard>
+      </View>
       <SuccessPopup visible={showSuccess} message={successMessage} icon={successIcon} />
       <LoadingOverlay visible={loading} progress={progress} />
-    </View>
+    </>
   );
 };
 
@@ -248,6 +267,15 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 15,
     color: colors.textSecondary,
+  },
+  hiddenPlaceholder: {
+    width: 280,
+    height: 280,
+    borderRadius: 16,
+    backgroundColor: colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   toggleContainer: {
     flexDirection: 'row',

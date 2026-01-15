@@ -1,6 +1,6 @@
 import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { CameraView, useCameraPermissions, FlashMode } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 
@@ -14,16 +14,14 @@ interface CameraBoxProps {
 
 export const CameraBox = forwardRef<CameraBoxRef, CameraBoxProps>(({ instruction }, ref) => {
   const [permission, requestPermission] = useCameraPermissions();
-  const [flash, setFlash] = useState(false);
+  const [enableTorch, setEnableTorch] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
   useImperativeHandle(ref, () => ({
     capture: async () => {
       if (!cameraRef.current) return null;
       try {
-        const photo = await cameraRef.current.takePictureAsync({
-          flash: flash ? 'on' : 'off',
-        });
+        const photo = await cameraRef.current.takePictureAsync();
         return photo?.uri || null;
       } catch (error) {
         Alert.alert('Error', 'Failed to capture image');
@@ -65,6 +63,7 @@ export const CameraBox = forwardRef<CameraBoxRef, CameraBoxProps>(({ instruction
           ref={cameraRef} 
           style={styles.camera} 
           facing="back"
+          enableTorch={enableTorch}
         >
           <View style={styles.overlay}>
             <View style={styles.cornerTL} />
@@ -74,11 +73,11 @@ export const CameraBox = forwardRef<CameraBoxRef, CameraBoxProps>(({ instruction
           </View>
         </CameraView>
         <TouchableOpacity 
-          style={styles.flashButton} 
-          onPress={() => setFlash(!flash)}
+          style={[styles.flashButton, enableTorch && styles.flashButtonActive]} 
+          onPress={() => setEnableTorch(!enableTorch)}
         >
           <MaterialIcons 
-            name={flash ? 'flash-on' : 'flash-off'} 
+            name={enableTorch ? 'flash-on' : 'flash-off'} 
             size={24} 
             color={colors.surface} 
           />
@@ -153,6 +152,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     borderRadius: 20,
     padding: 8,
+  },
+  flashButtonActive: {
+    backgroundColor: 'rgba(26, 115, 232, 0.8)',
   },
   instruction: {
     marginTop: 20,

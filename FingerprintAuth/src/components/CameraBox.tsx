@@ -64,14 +64,13 @@ export const CameraBox = forwardRef<CameraBoxRef, CameraBoxProps>(({ instruction
           style={styles.camera} 
           facing="back"
           enableTorch={enableTorch}
-        >
-          <View style={styles.overlay}>
-            <View style={styles.cornerTL} />
-            <View style={styles.cornerTR} />
-            <View style={styles.cornerBL} />
-            <View style={styles.cornerBR} />
-          </View>
-        </CameraView>
+        />
+        <View style={styles.overlayContainer}>
+          <View style={styles.cornerTL} />
+          <View style={styles.cornerTR} />
+          <View style={styles.cornerBL} />
+          <View style={styles.cornerBR} />
+        </View>
         <TouchableOpacity 
           style={[styles.flashButton, enableTorch && styles.flashButtonActive]} 
           onPress={() => setEnableTorch(!enableTorch)}
@@ -101,9 +100,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
   },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'transparent',
+  overlayContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    pointerEvents: 'none',
   },
   cornerTL: {
     position: 'absolute',

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@types/react": "^19.2.8",
+    "@types/react-native": "^0.72.8",
+    "expo": "^54.0.31",
+    "expo-blur": "~15.0.8",
+    "expo-camera": "^17.0.10"
+  }
+}

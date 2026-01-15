@@ -63,7 +63,7 @@ export const CameraBox = forwardRef<CameraBoxRef, CameraBoxProps>(({ instruction
           ref={cameraRef} 
           style={styles.camera} 
           facing="back"
-          enableTorch={flash}
+          flash={flash ? 'on' : 'off'}
         >
           <View style={styles.overlay}>
             <View style={styles.cornerTL} />

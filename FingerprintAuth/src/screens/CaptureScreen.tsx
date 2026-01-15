@@ -6,6 +6,7 @@ import { GlassCard } from '../components/GlassCard';
 import { CameraBox } from '../components/CameraBox';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { LoadingOverlay } from '../components/LoadingOverlay';
+import { SuccessPopup } from '../components/SuccessPopup';
 import { api } from '../services/api';
 import { colors } from '../theme/colors';
 
@@ -20,6 +21,8 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showCamera, setShowCamera] = useState(true);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const cameraRef = useRef<any>(null);
 
   const pickImage = async () => {
@@ -33,11 +36,21 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
     if (!result.canceled && result.assets[0]) {
       const uri = result.assets[0].uri;
       if (step === 1) {
-        setFingerprint1(uri);
-        setStep(2);
+        setSuccessMessage('First fingerprint captured!');
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          setFingerprint1(uri);
+          setStep(2);
+        }, 1500);
       } else {
-        setFingerprint2(uri);
-        await uploadAndVerify(fingerprint1, uri);
+        setSuccessMessage('Second fingerprint captured!');
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          setFingerprint2(uri);
+          uploadAndVerify(fingerprint1, uri);
+        }, 1500);
       }
     }
   };
@@ -49,11 +62,21 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
     if (!uri) return;
 
     if (step === 1) {
-      setFingerprint1(uri);
-      setStep(2);
+      setSuccessMessage('First fingerprint captured!');
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        setFingerprint1(uri);
+        setStep(2);
+      }, 1500);
     } else {
-      setFingerprint2(uri);
-      await uploadAndVerify(fingerprint1, uri);
+      setSuccessMessage('Second fingerprint captured!');
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        setFingerprint2(uri);
+        uploadAndVerify(fingerprint1, uri);
+      }, 1500);
     }
   };
 
@@ -155,6 +178,7 @@ export const CaptureScreen: React.FC<CaptureScreenProps> = ({ onResult }) => {
           </TouchableOpacity>
         )}
       </GlassCard>
+      <SuccessPopup visible={showSuccess} message={successMessage} />
       <LoadingOverlay visible={loading} progress={progress} />
     </View>
   );

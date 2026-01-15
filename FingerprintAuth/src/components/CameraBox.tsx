@@ -21,7 +21,9 @@ export const CameraBox = forwardRef<CameraBoxRef, CameraBoxProps>(({ instruction
     capture: async () => {
       if (!cameraRef.current) return null;
       try {
-        const photo = await cameraRef.current.takePictureAsync();
+        const photo = await cameraRef.current.takePictureAsync({
+          flash: flash ? 'on' : 'off',
+        });
         return photo?.uri || null;
       } catch (error) {
         Alert.alert('Error', 'Failed to capture image');
@@ -63,7 +65,6 @@ export const CameraBox = forwardRef<CameraBoxRef, CameraBoxProps>(({ instruction
           ref={cameraRef} 
           style={styles.camera} 
           facing="back"
-          flash={flash ? 'on' : 'off'}
         >
           <View style={styles.overlay}>
             <View style={styles.cornerTL} />
